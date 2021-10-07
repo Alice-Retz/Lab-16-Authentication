@@ -19,6 +19,22 @@ describe('Lab 16 Authentication routes', () => {
     });
   });
 
+  it('logs in a user via POST', async () => {
+    await UserService.create({
+      email: 'ruby@dogs.woof',
+      password: 'my-password!',
+    });
+
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: 'ruby@dogs.woof', password: 'my-password!' });
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      email: 'ruby@dogs.woof',
+    });
+  });
+
   afterAll(() => {
     pool.end();
   });
