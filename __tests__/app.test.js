@@ -41,6 +41,14 @@ describe('Lab 16 Authentication routes', () => {
     });
   });
 
+  it('should send a 401 error if log in info is incorrect', async () => {
+    const res = await request(app).post('/api/v1/auth/login').send({
+      email: 'a@a.com',
+      password: '1234pass',
+    });
+    expect(res.status).toBe(401);
+  });
+
   // it('returns the currently logged in user', async () => {
   //   const res = await request(app)
   //     .get('/api/v1/auth/me')
