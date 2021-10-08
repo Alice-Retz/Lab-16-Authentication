@@ -47,12 +47,12 @@ describe('Lab 16 Authentication routes', () => {
 
   it('returns the currently logged in user', async () => {
     await UserService.create(testUser);
-    const agent = request.agent(app);
+    const agent = await request.agent(app);
 
     await agent.post('/api/v1/auth/login').send(testUser);
 
     const res = await agent.get('/api/v1/auth/me');
-    expect(res.body).toEqual({ id: 1, email: 'a@a.com' });
+    expect(res.body).toEqual({ id: '1', email: 'a@a.com' });
   });
 
   afterAll(() => {
