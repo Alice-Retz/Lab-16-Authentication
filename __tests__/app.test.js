@@ -22,7 +22,7 @@ describe('Lab 16 Authentication routes', () => {
 
   it('should send a 400 error if email already exists', async () => {
     await UserService.create(testUser);
-    const res = await request(app).post('/api/v1/auth/sign-up').send(testUser);
+    const res = await request(app).post('/api/v1/auth/signup').send(testUser);
 
     expect(res.status).toBe(400);
   });
