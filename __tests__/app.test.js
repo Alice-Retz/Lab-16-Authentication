@@ -28,11 +28,7 @@ describe('Lab 16 Authentication routes', () => {
   });
 
   it('logs in a user via POST', async () => {
-    await UserService.create({
-      email: 'a@a.com',
-      password: 'pass1234',
-    });
-
+    await UserService.create(testUser);
     const res = await request(app).post('/api/v1/auth/login').send(testUser);
 
     expect(res.body).toEqual({
@@ -49,13 +45,15 @@ describe('Lab 16 Authentication routes', () => {
     expect(res.status).toBe(401);
   });
 
-  // it('returns the currently logged in user', async () => {
-  //   const res = await request(app)
-  //     .get('/api/v1/auth/me')
-  //     .then((res) => {
-  //       expect(res.body).toEqual();
-  //     });
-  // });
+  it('returns the currently logged in user', async () => {
+    await UserService.create(testUser);
+    const agent = request.agent(app);
+
+    await agent.post('/api/v1/auth/login').send(testUser);
+
+    const res = await agent.get('/api/v1/auth/me');
+    expect(res.body).toEqual({ id: 1, email: 'a@a.com' });
+  });
 
   afterAll(() => {
     pool.end();
