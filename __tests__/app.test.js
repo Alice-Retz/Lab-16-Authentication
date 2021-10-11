@@ -28,7 +28,7 @@ describe('Lab 16 Authentication routes', () => {
     expect(res.status).toBe(400);
   });
 
-  xit('logs in a user via POST', async () => {
+  it('logs in a user via POST', async () => {
     await UserService.create(testUser);
     const res = await request(app).post('/api/v1/auth/login').send(testUser);
 
@@ -56,7 +56,6 @@ describe('Lab 16 Authentication routes', () => {
     const res = await agent.get('/api/v1/auth/me');
     expect(res.body).toEqual({ id: '1', email: 'a@a.com' });
   });
-
 
   afterAll(() => {
     pool.end();
