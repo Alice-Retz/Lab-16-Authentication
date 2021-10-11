@@ -51,14 +51,29 @@ describe('Lab 16 Authentication routes', () => {
     expect(res.status).toBe(401);
   });
 
-  it('returns the currently logged in user', async () => {
-    await UserService.create(testUser);
-    const agent = await request.agent(app);
+  // it('returns the currently logged in user', async () => {
+  //   await UserService.create(testUser);
+  //   const agent = await request.agent(app);
 
+  //   await agent.post('/api/v1/auth/login').send(testUser);
+
+  //   const res = await agent.get('/api/v1/auth/me');
+  //   expect(res.body).toEqual({ id: '1', email: 'a@a.com', role: 'USER' });
+  // });
+
+  it('should create a new post from the signed in user', async () => {
+    const user = await UserService.create(testUser);
+    const agent = request.agent(app);
     await agent.post('/api/v1/auth/login').send(testUser);
+    const res = await request(app)
+      .post('/api/v1/posts')
+      .send({ text: 'This is a blog post' });
 
-    const res = await agent.get('/api/v1/auth/me');
-    expect(res.body).toEqual({ id: '1', email: 'a@a.com', role: 'USER' });
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      userId: user.id,
+      text: 'This is a blog post',
+    });
   });
 
   afterAll(() => {
