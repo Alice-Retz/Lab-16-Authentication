@@ -25,7 +25,7 @@ describe('Lab 16 Authentication routes', () => {
     });
   });
 
-  xit('should send a 400 error if email already exists', async () => {
+  it('should send a 400 error if email already exists', async () => {
     await UserService.create(testUser);
     const res = await request(app).post('/api/v1/auth/signup').send(testUser);
 
@@ -43,7 +43,7 @@ describe('Lab 16 Authentication routes', () => {
     });
   });
 
-  xit('should send a 401 error if log in info is incorrect', async () => {
+  it('should send a 401 error if log in info is incorrect', async () => {
     const res = await request(app).post('/api/v1/auth/login').send({
       email: 'a@a.com',
       password: '1234pass',
@@ -51,14 +51,14 @@ describe('Lab 16 Authentication routes', () => {
     expect(res.status).toBe(401);
   });
 
-  xit('returns the currently logged in user', async () => {
+  it('returns the currently logged in user', async () => {
     await UserService.create(testUser);
     const agent = await request.agent(app);
 
     await agent.post('/api/v1/auth/login').send(testUser);
 
     const res = await agent.get('/api/v1/auth/me');
-    expect(res.body).toEqual({ id: '1', email: 'a@a.com' });
+    expect(res.body).toEqual({ id: '1', email: 'a@a.com', role: 'USER' });
   });
 
   afterAll(() => {
