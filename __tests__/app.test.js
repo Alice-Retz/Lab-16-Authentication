@@ -9,7 +9,11 @@ describe('Lab 16 Authentication routes', () => {
     return setup(pool);
   });
 
-  const testUser = { email: 'a@a.com', password: 'pass1234', role: 'USER' };
+  const testUser = {
+    email: 'a@a.com',
+    password: 'pass1234',
+    roleTitle: 'USER',
+  };
 
   it('signs up a user via POST', async () => {
     const res = await request(app).post('/api/v1/auth/signup').send(testUser);
