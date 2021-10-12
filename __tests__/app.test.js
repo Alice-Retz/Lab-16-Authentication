@@ -67,6 +67,35 @@ describe('Lab 16 Authentication routes', () => {
     });
   });
 
+  xit('should allow ADMIN to update a user role', async () => {
+    await UserService.create(testUser);
+    await UserService.create({
+      email: 'admin@a.com',
+      password: '1234pass',
+      roleTitle: 'ADMIN',
+    });
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'admin@a.com', password: '1234pass' });
+
+    return request(app)
+      .patch('/api/v1/auth/1')
+      .send({
+        email: 'a@a.com',
+        password: 'pass1234',
+        roleTitle: 'ADMIN',
+      })
+      .then((res) => {
+        expect(res.body).toEqual({
+          email: 'a@a.com',
+          password: 'pass1234',
+          roleTitle: 'ADMIN',
+        });
+      });
+  });
+
   afterAll(() => {
     pool.end();
   });
