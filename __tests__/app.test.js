@@ -15,6 +15,8 @@ describe('Lab 16 Authentication routes', () => {
     roleTitle: 'USER',
   };
 
+  //=====================================================//
+
   it('signs up a user via POST', async () => {
     const res = await request(app).post('/api/v1/auth/signup').send(testUser);
 
@@ -25,12 +27,16 @@ describe('Lab 16 Authentication routes', () => {
     });
   });
 
+  //=====================================================//
+
   it('should send a 400 error if email already exists', async () => {
     await UserService.create(testUser);
     const res = await request(app).post('/api/v1/auth/signup').send(testUser);
 
     expect(res.status).toBe(400);
   });
+
+  //=====================================================//
 
   it('logs in a user via POST', async () => {
     await UserService.create(testUser);
@@ -43,6 +49,8 @@ describe('Lab 16 Authentication routes', () => {
     });
   });
 
+  //=====================================================//
+
   it('should send a 401 error if log in info is incorrect', async () => {
     const res = await request(app).post('/api/v1/auth/login').send({
       email: 'a@a.com',
@@ -50,6 +58,8 @@ describe('Lab 16 Authentication routes', () => {
     });
     expect(res.status).toBe(401);
   });
+
+  //=====================================================//
 
   it('returns the currently logged in user', async () => {
     await UserService.create(testUser);
@@ -67,7 +77,9 @@ describe('Lab 16 Authentication routes', () => {
     });
   });
 
-  xit('should allow ADMIN to update a user role', async () => {
+  //=====================================================//
+
+  it('should allow ADMIN to update a user role', async () => {
     await UserService.create(testUser);
     await UserService.create({
       email: 'admin@a.com',
@@ -80,21 +92,53 @@ describe('Lab 16 Authentication routes', () => {
       .post('/api/v1/auth/login')
       .send({ email: 'admin@a.com', password: '1234pass' });
 
-    return request(app)
-      .patch('/api/v1/auth/1')
-      .send({
-        email: 'a@a.com',
-        password: 'pass1234',
-        roleTitle: 'ADMIN',
-      })
-      .then((res) => {
-        expect(res.body).toEqual({
-          email: 'a@a.com',
-          password: 'pass1234',
-          roleTitle: 'ADMIN',
-        });
-      });
+    const res = await agent.patch('/api/v1/auth/1').send({
+      email: 'a@a.com',
+      passwordHash: 'pass1234',
+      roleTitle: 'ADMIN',
+    });
+
+    expect(res.body).toEqual({
+      id: '1',
+      email: 'a@a.com',
+      role: 'ADMIN',
+    });
   });
+
+  //=====================================================//
+
+  it('should send a 403 error if role is not ADMIN', async () => {
+    await UserService.create(testUser);
+
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'a@a.com', password: 'pass1234' });
+
+    const res = await agent.patch('/api/v1/auth/login').send({
+      email: 'a@a.com',
+      passwordHash: 'pass1234',
+      roleTitle: 'ADMIN',
+    });
+    expect(res.status).toBe(403);
+  });
+
+  //=====================================================//
+
+  it.only('should send a 401 error if there is no or an incorrect jwt', async () => {
+    const agent = request.agent(app);
+
+    const res = await agent.patch('/api/v1/auth/login').send({
+      email: 'a@a.com',
+      passwordHash: 'pass1234',
+      roleTitle: 'ADMIN',
+    });
+
+    expect(res.status).toBe(401);
+  });
+
+  //=====================================================//
 
   afterAll(() => {
     pool.end();
