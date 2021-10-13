@@ -126,7 +126,7 @@ describe('Lab 16 Authentication routes', () => {
 
   //=====================================================//
 
-  it.only('should send a 401 error if there is no or an incorrect jwt', async () => {
+  it('should send a 401 error if there is no or an incorrect jwt', async () => {
     const agent = request.agent(app);
 
     const res = await agent.patch('/api/v1/auth/login').send({
