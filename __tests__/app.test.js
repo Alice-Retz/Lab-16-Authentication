@@ -107,7 +107,7 @@ describe('Lab 16 Authentication routes', () => {
 
   //=====================================================//
 
-  it.only('should send a 403 error if role is not ADMIN', async () => {
+  it('should send a 403 error if role is not ADMIN', async () => {
     await UserService.create(testUser);
 
     const agent = request.agent(app);
@@ -122,6 +122,20 @@ describe('Lab 16 Authentication routes', () => {
       roleTitle: 'ADMIN',
     });
     expect(res.status).toBe(403);
+  });
+
+  //=====================================================//
+
+  it.only('should send a 401 error if there is no or an incorrect jwt', async () => {
+    const agent = request.agent(app);
+
+    const res = await agent.patch('/api/v1/auth/login').send({
+      email: 'a@a.com',
+      passwordHash: 'pass1234',
+      roleTitle: 'ADMIN',
+    });
+
+    expect(res.status).toBe(401);
   });
 
   //=====================================================//
