@@ -107,7 +107,7 @@ describe('Lab 16 Authentication routes', () => {
 
   //=====================================================//
 
-  it.only('should send a 401 error if log in info is incorrect', async () => {
+  it.only('should send a 403 error if role is not ADMIN', async () => {
     await UserService.create(testUser);
 
     const agent = request.agent(app);
@@ -116,10 +116,12 @@ describe('Lab 16 Authentication routes', () => {
       .post('/api/v1/auth/login')
       .send({ email: 'a@a.com', password: 'pass1234' });
 
-    const res = await agent.put('/api/v1/auth/login').send({
-      status: 403,
+    const res = await agent.patch('/api/v1/auth/login').send({
+      email: 'a@a.com',
+      passwordHash: 'pass1234',
+      roleTitle: 'ADMIN',
     });
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(403);
   });
 
   //=====================================================//
