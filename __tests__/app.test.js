@@ -79,7 +79,7 @@ describe('Lab 16 Authentication routes', () => {
 
   //=====================================================//
 
-  it.only('should allow ADMIN to update a user role', async () => {
+  it('should allow ADMIN to update a user role', async () => {
     await UserService.create(testUser);
     await UserService.create({
       email: 'admin@a.com',
@@ -103,6 +103,23 @@ describe('Lab 16 Authentication routes', () => {
       email: 'a@a.com',
       role: 'ADMIN',
     });
+  });
+
+  //=====================================================//
+
+  it.only('should send a 401 error if log in info is incorrect', async () => {
+    await UserService.create(testUser);
+
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'a@a.com', password: 'pass1234' });
+
+    const res = await agent.put('/api/v1/auth/login').send({
+      status: 403,
+    });
+    expect(res.status).toBe(401);
   });
 
   //=====================================================//
