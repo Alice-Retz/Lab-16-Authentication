@@ -67,7 +67,7 @@ describe('Lab 16 Authentication routes', () => {
     });
   });
 
-  xit('should allow ADMIN to update a user role', async () => {
+  it('should allow ADMIN to update a user role', async () => {
     await UserService.create(testUser);
     await UserService.create({
       email: 'admin@a.com',
